@@ -15,11 +15,11 @@ from PIL import Image, ImageDraw, ImageFont
 input_file = sys.argv[1]
 output_file = sys.argv[2]
 
-lonLU = float(sys.argv[3])
-latLU = float(sys.argv[4])
+lon_LU = float(sys.argv[3])
+lat_LU = float(sys.argv[4])
 
-lonRD = float(sys.argv[5])
-latRD = float(sys.argv[6])
+lon_RD = float(sys.argv[5])
+lat_RD = float(sys.argv[6])
 
 width = int(sys.argv[7])
 height = int(sys.argv[8])
@@ -28,11 +28,11 @@ height = int(sys.argv[8])
 with open(os.path.join(os.path.dirname(sys.argv[0]), "config.json"), "r") as f:
     config = json.load(f)
 
-lonLatLeftUp = [lonLU, latLU]
-lonLatRightDown = [lonRD, latRD]
+lon_lat_left_up = [lon_LU, lat_LU]
+lon_lat_right_down = [lon_RD, lat_RD]
 
-deltaLon = abs(lonLatLeftUp[0] - lonLatRightDown[0])
-deltaLat = abs(lonLatLeftUp[1] - lonLatRightDown[1])
+delta_lon = abs(lon_lat_left_up[0] - lon_lat_right_down[0])
+delta_lat = abs(lon_lat_left_up[1] - lon_lat_right_down[1])
 
 width = 10000
 height = 10000
@@ -47,10 +47,6 @@ kmz.extractall()
 
 data = parseXml("doc.kml")
 
-
-L = getDistance(lonLU, lonRD, latLU, latLU)  # ширина рассматриваемово кадра в метрах
-H = getDistance(lonLU, latLU, lonLU, latRD)  # высота рассматриваемого кадра в метрах
-
 K = config["icon"]["att"]  # минимальное отношение ширины объекта к шиирине кадра
 
 alpha = math.ceil(width / 5000)  # коэфицциент для ширины всяких линий (пока сделал такможно улучшить)
@@ -59,7 +55,7 @@ center_flag = False  # флаг отвечающий за привязку callo
 circle_flag = config["circle"]  # флаг отвечающий за нанесение кружочка и соответственного форматирования callout-a
 
 dones_coord = []  # координаты на которых находится какой-то из нанесённых объектов
-infoLocPic = []  # координаты нанесённых объектов (сделано для callout-ов, чтолбы они не накладывались на объекты)
+info_loc_pic = []  # координаты нанесённых объектов (сделано для callout-ов, чтолбы они не накладывались на объекты)
 
 print("Нанесение разметок на изображение: ")
 procent = 0
@@ -69,28 +65,28 @@ for pm in data:
     extremeCoords = pm.getFigure().getExtreme()  # вытаскиваем максимальные и минимальные координаты фигуры
     lonC = (extremeCoords[0][0] + extremeCoords[1][0]) / 2  # Получаем координаты центра
     latC = (extremeCoords[0][1] + extremeCoords[1][1]) / 2  # Получаем координаты центра
-    coordPM = getCoordsOnPicture(pm.getFigure().getCoordinates(), lonLatLeftUp, lonLatRightDown)
+    coordPM = getCoordsOnPicture(pm.getFigure().getCoordinates(), lon_lat_left_up, lon_lat_right_down)
     if coordPM != [] and not (pm.getFigure().getCoordinates() in dones_coord):
-        lon = abs(lonC - lonLatLeftUp[0])
-        lat = abs(latC - lonLatLeftUp[1])
-        x = int(lon * width / deltaLon)
-        y = int(lat * height / deltaLat)
+        lon = abs(lonC - lon_lat_left_up[0])
+        lat = abs(latC - lon_lat_left_up[1])
+        x = int(lon * width / delta_lon)
+        y = int(lat * height / delta_lat)
 
         # если какой-то из размеров получился 0 то запишим константные значения
 
         if config["lines"] and len(coordPM) > 1:
             for i in range(len(coordPM) - 1):
                 draw.line((
-                    int(abs(coordPM[i][0] - lonLatLeftUp[0]) * width / deltaLon),
-                    int(abs(coordPM[i][1] - lonLatLeftUp[1]) * height / deltaLat),
-                    int(abs(coordPM[i + 1][0] - lonLatLeftUp[0]) * width / deltaLon),
-                    int(abs(coordPM[i + 1][1] - lonLatLeftUp[1]) * height / deltaLat)
+                    int(abs(coordPM[i][0] - lon_lat_left_up[0]) * width / delta_lon),
+                    int(abs(coordPM[i][1] - lon_lat_left_up[1]) * height / delta_lat),
+                    int(abs(coordPM[i + 1][0] - lon_lat_left_up[0]) * width / delta_lon),
+                    int(abs(coordPM[i + 1][1] - lon_lat_left_up[1]) * height / delta_lat)
                 ), fill=config["lines"]["color"], width=int(1 * alpha))
-                infoLocPic.append({
-                    "x1": int(abs(coordPM[i][0] - lonLatLeftUp[0]) * width / deltaLon),
-                    "y1": int(abs(coordPM[i][1] - lonLatLeftUp[1]) * height / deltaLat),
-                    "x2": int(abs(coordPM[i + 1][0] - lonLatLeftUp[0]) * width / deltaLon),
-                    "y2": int(abs(coordPM[i + 1][1] - lonLatLeftUp[1]) * height / deltaLat)
+                info_loc_pic.append({
+                    "x1": int(abs(coordPM[i][0] - lon_lat_left_up[0]) * width / delta_lon),
+                    "y1": int(abs(coordPM[i][1] - lon_lat_left_up[1]) * height / delta_lat),
+                    "x2": int(abs(coordPM[i + 1][0] - lon_lat_left_up[0]) * width / delta_lon),
+                    "y2": int(abs(coordPM[i + 1][1] - lon_lat_left_up[1]) * height / delta_lat)
                 })
 
         if config["icon"] and pm.getIconHref() != "":
@@ -112,7 +108,7 @@ for pm in data:
                 (cx, cy),
                 image_icon.convert('RGBA').resize((int(image_icon.width * alphaI), int(image_icon.height * alphaI)))
             )
-            infoLocPic.append({
+            info_loc_pic.append({
                 "x1": cx,
                 "y1": cy,
                 "x2": cx + image_icon.width * alphaI,
@@ -128,19 +124,20 @@ for pm in data:
                 start=0, end=360,
                 fill=config["circle"]["color"], width=alpha
             )
-            infoLocPic.append({
+            info_loc_pic.append({
                 "x1": cx,
                 "y1": cy,
                 "x2": cx + 2 * R,
                 "y2": cy + 2 * R
             })
+
         if config["points"] and len(coordPM) < 2:
             center_flag = True
             draw.ellipse(
                 (x - 2 * alpha, y - 2 * alpha, x + 2 * alpha, y + 2 * alpha),
                 fill=config["points"]["color"]
             )
-            infoLocPic.append({
+            info_loc_pic.append({
                 "x1": x - 2 * alpha,
                 "y1": y - 2 * alpha,
                 "x2": x + 2 * alpha,
@@ -172,7 +169,7 @@ if config["callouts"]:
     for pm in data:
         sign = 1
         procent += 1
-        coordPM = getCoordsOnPicture(pm.getFigure().getCoordinates(), lonLatLeftUp, lonLatRightDown)
+        coordPM = getCoordsOnPicture(pm.getFigure().getCoordinates(), lon_lat_left_up, lon_lat_right_down)
         if coordPM != [] and not (pm.getFigure().getCoordinates() in dones_coord):
 
             extremeCoords = pm.getFigure().getExtreme()
@@ -188,8 +185,8 @@ if config["callouts"]:
             else:
                 cords = str(lonC) + " / " + str(latC)
 
-            lon = abs(lonC - lonLatLeftUp[0])
-            lat = abs(latC - lonLatLeftUp[1])
+            lon = abs(lonC - lon_lat_left_up[0])
+            lat = abs(latC - lon_lat_left_up[1])
 
             if len(coordPM) < 2:
                 R = K * width
@@ -197,14 +194,14 @@ if config["callouts"]:
                 R = 0
                 coeff_callout_line = alpha * 100
                 if not (anchor_text_center):
-                    lon = abs(coordPM[int(len(coordPM) / 2)][0] - lonLatLeftUp[0])
-                    lat = abs(coordPM[int(len(coordPM) / 2)][1] - lonLatLeftUp[1])
+                    lon = abs(coordPM[int(len(coordPM) / 2)][0] - lon_lat_left_up[0])
+                    lat = abs(coordPM[int(len(coordPM) / 2)][1] - lon_lat_left_up[1])
 
-            x = int(lon * width / deltaLon)
-            y = int(lat * height / deltaLat)
+            x = int(lon * width / delta_lon)
+            y = int(lat * height / delta_lat)
 
             if config["callouts"]["pic"] and pm.getPicHref() != "":
-                pic_size = config["callouts"]["pic"]["pic_size"]
+                pic_size = config["callouts"]["pic"]["pic_att"]
                 with Image.open(pm.getPicHref()) as image_pic:
                     image_pic.load()
                 picWidth = image_pic.width
@@ -233,7 +230,7 @@ if config["callouts"]:
                 minX = min(nxE, int(nxE - sign * picWidth * betta - sign * margin))
                 minX = min(minX, int(nxE - sign * font.getsize(cords)[0] - sign * margin))
                 minX = min(minX, int(nxE - sign * font.getsize(pm.getName())[0] - sign * margin))
-                for i in infoLocPic:
+                for i in info_loc_pic:
                     if ((i["x1"] - alpha / k < maxX < i["x2"] + alpha / k and
                          i["y1"] - alpha / k < nyE < i["y2"] + alpha / k) or
                             (i["x1"] - alpha / k < minX < i["x2"] + alpha / k and
@@ -302,7 +299,7 @@ if config["callouts"]:
                     (int(nxE - c * picWidth * betta - sign * margin),
                      int(nyE - alpha * text_scale - picHeight * betta - margin * 2)),
                 )
-            infoLocPic.append({
+            info_loc_pic.append({
                 "x1": minX,
                 "y1": int(nyE - alpha * scale - picHeight * betta),
                 "x2": maxX,

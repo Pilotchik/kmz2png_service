@@ -5,12 +5,15 @@
   "lines": {
     "color": "blue"
   },
-  "circle": false,
+  "circle": {
+    "att": 0.004,
+    "color": "red"
+  },
   "callouts": {
     "text_scale": 10,
     "color": "gray",
     "pic": {
-      "pic_size": 0.003
+      "pic_att": 0.003
     },
     "anchor_text_center": false
   },

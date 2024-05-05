@@ -24,6 +24,5 @@ class Line:
             minX = min(minX, point[0])
             minY = min(minY, point[1])
 
-
         return [[minX, minY], [maxX, maxY]]
 

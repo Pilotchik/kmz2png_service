@@ -14,10 +14,10 @@ def getDistance(lon1, lat1, lon2, lat2):
     a = math.sin(dfi/2)**2 + math.sin(dlaymda/2)**2 * math.cos(fi1) * math.cos(fi2)
     return 6371*10**3 * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
 
-def getCoordsOnPicture(coordinates, lonLatLeftUp, lonLatRightDown):
+def getCoordsOnPicture(coordinates, lon_lat_left_up, lon_lat_right_down):
     data = []
     for coord in coordinates:
-        if lonLatLeftUp[0] <= coord[0] <= lonLatRightDown[0] and lonLatRightDown[1] <= coord[1] <= lonLatLeftUp[1]:
+        if lon_lat_left_up[0] <= coord[0] <= lon_lat_right_down[0] and lon_lat_right_down[1] <= coord[1] <= lon_lat_left_up[1]:
             data.append(coord)
     return data
 
