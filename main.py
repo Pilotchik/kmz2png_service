@@ -25,7 +25,7 @@ width = int(sys.argv[7])
 height = int(sys.argv[8])
 
 
-with open('config.json', "r") as f:
+with open(os.path.join(os.path.dirname(sys.argv[0]), "config.json"), "r") as f:
     config = json.load(f)
 
 lonLatLeftUp = [lonLU, latLU]
@@ -162,7 +162,7 @@ if config["callouts"]:
     margin = 5  # отступы
     scale = 5  # увеличение размеров выноски
     text_scale = config["callouts"]["text_scale"]
-    font = ImageFont.truetype("arialmt.ttf", size=int(alpha * text_scale))
+    font = ImageFont.truetype(os.path.join(os.path.dirname(sys.argv[0]),"arialmt.ttf"), size=int(alpha * text_scale))
 
     picWidth = 0 
     picHeight = 0 

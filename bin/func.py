@@ -75,9 +75,5 @@ def parseXml(kml):
         try:
             placeMark.setIconHref(child.Style.IconStyle.Icon.href.text)
         except: pass
-        print("name: " + placeMark.getName())
-        print("iconHref: " + placeMark.getIconHref())
-        print("picHref: " + placeMark.getPicHref())
-        print(placeMark.getFigure().getCoordinates())
         data.append(placeMark)
     return data
