@@ -1,0 +1,18 @@
+{
+  "icon":{
+    "att": 0.004
+  },
+  "lines": {
+    "color": "blue"
+  },
+  "circle": false,
+  "callouts": {
+    "text_scale": 10,
+    "color": "gray",
+    "pic": {
+      "pic_size": 0.003
+    },
+    "anchor_text_center": false
+  },
+  "points": false
+}
