@@ -37,7 +37,7 @@ deltaLat = abs(lonLatLeftUp[1] - lonLatRightDown[1])
 width = 10000
 height = 10000
 
-img = Image.new('RGBA', (width, height), (255, 255, 255, 255))
+img = Image.new('RGBA', (width, height), (255, 255, 255, 0))
 draw = ImageDraw.Draw(img)
 
 t = time.time()
